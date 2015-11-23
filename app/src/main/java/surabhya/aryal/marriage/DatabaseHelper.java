@@ -32,6 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(SQL_CREATE_PLAYER_TABLE);
 
         final String SQL_CREATE_GAME_TABLE = "CREATE TABLE " + DatabaseContract.GameEntry.TABLE_NAME + " (" +
+                DatabaseContract.GameEntry.COLUMN_NAME_GAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 DatabaseContract.GameEntry.COLUMN_NAME_PLAYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 DatabaseContract.GameEntry.COLUMN_NAME_MONEY_PER_POINT + " REAL NOT NULL, " +
                 DatabaseContract.GameEntry.COLUMN_NAME_GRAND_TOTAL_POINT + " INTEGER NOT NULL, " +

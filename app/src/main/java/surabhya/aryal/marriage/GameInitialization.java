@@ -2,15 +2,24 @@ package surabhya.aryal.marriage;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 
 public class GameInitialization extends ActionBarActivity {
+
+
+    int numberOfPlayers;
+    String gameType;
+    double moneyPerPoint;
+    double better;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +71,26 @@ public class GameInitialization extends ActionBarActivity {
         switch(view.getId()) {
             case R.id.radioMurder:
                 if (checked)
-                    // Pirates are the best
+                    gameType = "murder";
                     break;
             case R.id.radioKidnap:
                 if (checked)
-                    // Ninjas rule
+                    gameType = "kidnap";
                     break;
             case R.id.radioNormal:
                 if (checked)
-                    // Ninjas rule
+                    gameType = "normal";
                     break;
         }
     }
+
+    public void startGame(View view){
+        Spinner spinner = (Spinner) findViewById(R.id.editNumberOfPlayers);
+        numberOfPlayers = Integer.parseInt(String.valueOf(spinner.getSelectedItem()));
+        EditText moneyPerPointView  = (EditText) findViewById(R.id.editMoneyPerPoint);
+        moneyPerPoint = Double.parseDouble(moneyPerPointView.getText().toString());
+        EditText betterView  = (EditText) findViewById(R.id.editBetter);
+        better = Double.parseDouble(betterView.getText().toString());
+    }
+
 }

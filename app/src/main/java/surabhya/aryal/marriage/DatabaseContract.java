@@ -24,6 +24,7 @@ public class DatabaseContract {
 
     public static abstract class GameEntry implements BaseColumns{
         public static final String TABLE_NAME = "gameEntry";
+        public static final String COLUMN_NAME_GAME_ID = "gameId";
         public static final String COLUMN_NAME_PLAYER_ID = "playerId";
         public static final String COLUMN_NAME_MONEY_PER_POINT = "moneyPerPoint";
         public static final String COLUMN_NAME_GRAND_TOTAL_POINT = "grandTotalPoint";
