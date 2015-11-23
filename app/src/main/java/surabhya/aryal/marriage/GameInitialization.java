@@ -1,25 +1,39 @@
 package surabhya.aryal.marriage;
 
-import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 
-public class MainActivity extends ActionBarActivity {
+public class GameInitialization extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.game_initialization);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_game_initialization, menu);
+
+        Spinner staticSpinner = (Spinner) findViewById(R.id.editNumberOfPlayers);
+
+        // Create an ArrayAdapter using the string array and a default spinner
+        ArrayAdapter<CharSequence> staticAdapter = ArrayAdapter
+                .createFromResource(this, R.array.num_of_players_array,
+                        android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        staticAdapter
+                .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        staticSpinner.setAdapter(staticAdapter);
         return true;
     }
 
@@ -36,10 +50,5 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void showMenu(View view){
-        Intent intent = new Intent(this, GameInitialization.class);
-        startActivity(intent);
     }
 }
