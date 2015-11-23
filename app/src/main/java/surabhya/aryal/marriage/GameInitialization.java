@@ -4,7 +4,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 
 
@@ -50,5 +52,26 @@ public class GameInitialization extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radioMurder:
+                if (checked)
+                    // Pirates are the best
+                    break;
+            case R.id.radioKidnap:
+                if (checked)
+                    // Ninjas rule
+                    break;
+            case R.id.radioNormal:
+                if (checked)
+                    // Ninjas rule
+                    break;
+        }
     }
 }

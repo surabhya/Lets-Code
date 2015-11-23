@@ -14,5 +14,10 @@
         <item>6</item>
         <item>7</item>
     </string-array>
+    <string name="murder">Murder</string>
+    <string name="kidnap">Kidnap</string>
+    <string name="normal">Normal</string>
+    <string name="gameType">Game Type</string>
+    <string name="startGame">Start Game</string>
 
 </resources>
