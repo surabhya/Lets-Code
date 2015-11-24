@@ -31,6 +31,10 @@
             android:name=".GameStatus"
             android:label="@string/title_activity_game_status" >
         </activity>
+        <activity
+            android:name=".RoundInfo"
+            android:label="@string/title_activity_round_info" >
+        </activity>
     </application>
 
 </manifest>

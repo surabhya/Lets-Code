@@ -2,61 +2,40 @@ package surabhya.aryal.marriage;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-
 public class GameStatus extends Activity {
 
+    TableLayout tl;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_status);
+        tl = (TableLayout) findViewById(R.id.maintable);
+        addData();
+    }
 
-        String[] column  = { "Player 1", "Player 2", "Player 3"};
+    public void addData(){
+
+        String[] column  = { "Player 1", "Player 2", "Player 3", "Player 5"};
         ArrayList<Integer[]> row = new ArrayList<Integer[]>();
-        row.add(new Integer[]{2,6,7});
-        row.add(new Integer[]{3,6,7});
-        row.add(new Integer[]{5,6,7});
+        row.add(new Integer[]{2,6,7,3});
+        row.add(new Integer[]{3,6,7,1});
+        row.add(new Integer[]{5, 6, 7,5});
 
-        int rl=row.size();
-        int cl=column.length;
+        int rowCount= row.size();
+        int columnCount=column.length;
 
-        ScrollView sv = new ScrollView(this);
-        TableLayout tableLayout = createTableLayout(row, column,rl, cl);
-        HorizontalScrollView hsv = new HorizontalScrollView(this);
-
-        hsv.addView(tableLayout);
-        sv.addView(hsv);
-        setContentView(sv);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_game_status, menu);
-        return true;
-    }
-
-    private TableLayout createTableLayout(ArrayList<Integer[]> rv, String [] cv,int rowCount, int columnCount) {
-
-        //Create a tableLayout and its params
         TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
-        TableLayout tableLayout = new TableLayout(this);
-
-
-        //create tableRow params
         TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
         tableRowParams.setMargins(1, 1, 1, 1);
         tableRowParams.weight = 1;
@@ -64,7 +43,7 @@ public class GameStatus extends Activity {
         for (int i = 0; i <= rowCount+1; i++) {
             TableRow tableRow = new TableRow(this);
             // create tableRow
-            for (int j= 0; j <= columnCount; j++) {
+            for (int j = 0; j <= columnCount; j++) {
                 //create textView
                 TextView textView = new TextView(this);
                 textView.setGravity(Gravity.CENTER);
@@ -75,18 +54,16 @@ public class GameStatus extends Activity {
                 }else if(i==rowCount+1 && j!=0){
                     textView.setText("T");
                 }else if(i==0 && j!=0){
-                    textView.setText(cv[j-1]);
+                    textView.setText(column[j-1]);
                 } else if(i!=0 && j>0){
-                    textView.setText(rv.get(i-1)[j-1]+"");
+                    textView.setText(row.get(i-1)[j-1]+"");
                 }
                 //add textView to tableRow
                 tableRow.addView(textView, tableRowParams);
             }
             //dd tableRow to tableLayout
-            tableLayout.addView(tableRow, tableLayoutParams);
+            tl.addView(tableRow, tableLayoutParams);
         }
-
-        return tableLayout;
     }
 
     @Override
