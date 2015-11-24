@@ -1,5 +1,6 @@
 package surabhya.aryal.marriage;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -86,11 +87,19 @@ public class GameInitialization extends ActionBarActivity {
 
     public void startGame(View view){
         Spinner spinner = (Spinner) findViewById(R.id.editNumberOfPlayers);
-        numberOfPlayers = Integer.parseInt(String.valueOf(spinner.getSelectedItem()));
         EditText moneyPerPointView  = (EditText) findViewById(R.id.editMoneyPerPoint);
-        moneyPerPoint = Double.parseDouble(moneyPerPointView.getText().toString());
         EditText betterView  = (EditText) findViewById(R.id.editBetter);
-        better = Double.parseDouble(betterView.getText().toString());
+        Intent intent = new Intent(this, GameInitialization.class);
+
+        if(String.valueOf(spinner.getSelectedItem())==null || moneyPerPointView.getText().toString().equals("")
+                || betterView.getText().toString().equals("")){
+        }else{
+            numberOfPlayers = Integer.parseInt(String.valueOf(spinner.getSelectedItem()));
+            moneyPerPoint = Double.parseDouble(moneyPerPointView.getText().toString());
+            better = Double.parseDouble(betterView.getText().toString());
+            intent = new Intent(this, GameStatus.class);
+        }
+        startActivity(intent);
     }
 
 }

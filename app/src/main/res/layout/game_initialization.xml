@@ -16,6 +16,11 @@
         android:textSize="30sp"
         android:text="@string/welcomeMessage" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/numberOfPlayers" />
+
     <Spinner
         android:id="@+id/editNumberOfPlayers"
         android:layout_width="fill_parent"
