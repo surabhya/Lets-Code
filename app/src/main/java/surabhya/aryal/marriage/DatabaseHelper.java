@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by saryal on 11/23/15.
  */
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 
@@ -47,4 +48,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.GameEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
+
+
 }

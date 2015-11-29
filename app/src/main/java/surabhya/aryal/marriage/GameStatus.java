@@ -1,11 +1,13 @@
 package surabhya.aryal.marriage;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -15,22 +17,25 @@ import java.util.ArrayList;
 public class GameStatus extends Activity {
 
     TableLayout tl;
+    String[] column;
+    ArrayList<Integer[]> row;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_status);
-        tl = (TableLayout) findViewById(R.id.maintable);
+        tl = (TableLayout) findViewById(R.id.gameStatusTable);
         addData();
     }
 
     public void addData(){
 
-        String[] column  = { "Player 1", "Player 2", "Player 3", "Player 5"};
-        ArrayList<Integer[]> row = new ArrayList<Integer[]>();
+        column  = new String[]{ "Player 1", "Player 2", "Player 3", "Player 5"}; // get from database
+        row = new ArrayList<Integer[]>();  // get from database
         row.add(new Integer[]{2,6,7,3});
         row.add(new Integer[]{3,6,7,1});
         row.add(new Integer[]{5, 6, 7,5});
+        int[] total = new int[column.length];
 
         int rowCount= row.size();
         int columnCount=column.length;
@@ -48,15 +53,18 @@ public class GameStatus extends Activity {
                 TextView textView = new TextView(this);
                 textView.setGravity(Gravity.CENTER);
                 if(i==0 && j==0){
-                    textView.setText(" ");
+                    textView.setText("Round");
                 }else if(i==rowCount+1 && j==0){
                     textView.setText("Total");
                 }else if(i==rowCount+1 && j!=0){
-                    textView.setText("T");
+                    textView.setText(total[j-1]+""); // Sum
                 }else if(i==0 && j!=0){
-                    textView.setText(column[j-1]);
+                    textView.setText(column[j-1]); // Player Header
                 } else if(i!=0 && j>0){
+                    total[j-1] += row.get(i-1)[j-1];
                     textView.setText(row.get(i-1)[j-1]+"");
+                }else{
+                    textView.setText("Round" + i);
                 }
                 //add textView to tableRow
                 tableRow.addView(textView, tableRowParams);
@@ -64,6 +72,11 @@ public class GameStatus extends Activity {
             //dd tableRow to tableLayout
             tl.addView(tableRow, tableLayoutParams);
         }
+    }
+
+    public void newRound(View view){
+        Intent intent = new Intent(this, RoundInfo.class);
+        startActivity(intent);
     }
 
     @Override

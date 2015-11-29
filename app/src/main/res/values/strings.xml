@@ -24,6 +24,8 @@
     <string name="message">Game Status</string>
     <string name="title_activity_round_info">RoundInfo</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="roundinfo">Round Info</string>
+    <string name="newround">Add Round</string>
+    <string name="addround">Add Round</string>
 
 </resources>
