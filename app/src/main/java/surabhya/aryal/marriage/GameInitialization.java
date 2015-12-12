@@ -1,6 +1,8 @@
 package surabhya.aryal.marriage;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,8 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 
 public class GameInitialization extends ActionBarActivity {
 
@@ -22,6 +26,7 @@ public class GameInitialization extends ActionBarActivity {
     double moneyPerPoint;
     double better;
 
+    DatabaseHelper dbHelper = new DatabaseHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +88,8 @@ public class GameInitialization extends ActionBarActivity {
                     gameType = "normal";
                     break;
         }
+
+
     }
 
     public void startGame(View view){
@@ -97,6 +104,7 @@ public class GameInitialization extends ActionBarActivity {
             numberOfPlayers = Integer.parseInt(String.valueOf(spinner.getSelectedItem()));
             moneyPerPoint = Double.parseDouble(moneyPerPointView.getText().toString());
             better = Double.parseDouble(betterView.getText().toString());
+            dbHelper.addGameInfo(numberOfPlayers, gameType, moneyPerPoint, better);
             intent = new Intent(this, GameStatus.class);
         }
         startActivity(intent);
