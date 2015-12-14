@@ -22,6 +22,8 @@ public class RoundInfo extends ActionBarActivity {
     TableLayout tl;
     String[] row;
     String[] col;
+    int numOfPlayers;
+    DatabaseHelper dbHelper = new DatabaseHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,12 @@ public class RoundInfo extends ActionBarActivity {
 
     public void addData(){
 
-        row  = new String[]{ "Player 1", "Player 2", "Player 3", "Player 4"}; // get from database
+        ArrayList<PlayerInfo> players = dbHelper.findAllPlayerByGameID(0);
+        numOfPlayers = players.size();
+        row = new String[numOfPlayers];
+        for(int i =0; i<numOfPlayers; i++){
+            row[i] = players.get(i).playerName;
+        }
         col  = new String[]{ "Winner", "Seen", "Less", "Points"}; // get from database
 
         int rowCount=row.length;
@@ -42,55 +49,55 @@ public class RoundInfo extends ActionBarActivity {
         TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
         tableRowParams.setMargins(1, 1, 1, 1);
         tableRowParams.weight = 1;
+        int count = 1;
 
         for (int i = 0; i <= rowCount; i++) {
             TableRow tableRow = new TableRow(this);
             // create tableRow
-            for (int j = 0; j <= rowCount; j++) {
+            for (int j = 0; j <= 4; j++) {
                 //create textView
                 TextView textView = new TextView(this);
                 textView.setGravity(Gravity.CENTER);
-                RadioGroup radioGroup = new RadioGroup(this);
-                RadioButton radioWinner = new RadioButton(this);
                 CheckBox checkBox = new CheckBox(this);
                 EditText point = new EditText(this);
                 if(i==0 && j==0){
                     textView.setText(" ");
                     tableRow.addView(textView, tableRowParams);
                 }else if(i>0 && j==0){
-                    textView.setText(row[i - 1]);
+                    textView.setText(row[i - 1]); // Player Header
                     tableRow.addView(textView, tableRowParams);
                 }else if(i==0 && j!=0){
-                    textView.setText(col[j-1]); // Player Header
+                    textView.setText(col[j-1]); //Game Header
                     tableRow.addView(textView, tableRowParams);
                 } else if(i>0 && j==1){
-                    radioWinner.setText("");
-                    radioWinner.setId(j-1);
-                    radioGroup.addView(radioWinner);
-                    tableRow.addView(radioGroup, tableRowParams);
+                    checkBox.setText(""); // Is Winner
+                    checkBox.setId(count++);
+                    tableRow.addView(checkBox, tableRowParams);
                 }else if(i>0 && j==2){
-                    checkBox.setText("");
-                    checkBox.setId(j-1);
+                    checkBox.setText(""); // Is Seen
+                    checkBox.setId(count++);
                     tableRow.addView(checkBox, tableRowParams);
                 }else if(i>0 && j==3){
-                    checkBox.setText("");
-                    checkBox.setId(j-1);
+                    checkBox.setText(""); // Is Less
+                    checkBox.setId(count++);
                     tableRow.addView(checkBox, tableRowParams);
                 }else if(i>0 && j==4){
-                    point.setInputType(100);
-                    point.setId(j-1);
+                    point.setInputType(100); // Points
+                    point.setId(count++);
                     tableRow.addView(point, tableRowParams);
                 }
-                //add textView to tableRow
-                //tableRow.addView(textView, tableRowParams);
             }
-            //dd tableRow to tableLayout
             tl.addView(tableRow, tableLayoutParams);
         }
     }
 
     public void addRound(View view){
-        return;
+        for(i = 1; i <=numOfPlayers*4)
+        TableRow t = (TableRow) view;
+        TextView firstTextView = (TextView) t.getChildAt(0);
+        TextView secondTextView = (TextView) t.getChildAt(1);
+        String firstText = firstTextView.getText().toString();
+        String secondText = secondTextView.getText().toString();
     }
 
     @Override

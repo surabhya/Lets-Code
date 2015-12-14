@@ -17,8 +17,9 @@ import java.util.ArrayList;
 public class GameStatus extends Activity {
 
     TableLayout tl;
-    String[] column;
+    String[] playerName;
     ArrayList<Integer[]> row;
+    DatabaseHelper dbHelper = new DatabaseHelper(this);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,16 +30,16 @@ public class GameStatus extends Activity {
     }
 
     public void addData(){
-
-        column  = new String[]{ "Player 1", "Player 2", "Player 3", "Player 5"}; // get from database
+        ArrayList<PlayerInfo> players = dbHelper.findAllPlayerByGameID(0);
+        int numOfPlayers = players.size();
+        playerName = new String[numOfPlayers];
         row = new ArrayList<Integer[]>();  // get from database
-        row.add(new Integer[]{2,6,7,3});
-        row.add(new Integer[]{3,6,7,1});
-        row.add(new Integer[]{5, 6, 7,5});
-        int[] total = new int[column.length];
-
-        int rowCount= row.size();
-        int columnCount=column.length;
+        for(int i =0; i<numOfPlayers; i++){
+            playerName[i] = players.get(i).playerName;
+            row.add(new Integer[]{1,2,3,4,5,6,7});
+        }
+        int[] total = new int[numOfPlayers];
+        int rowCount= numOfPlayers;
 
         TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
         TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
@@ -48,7 +49,7 @@ public class GameStatus extends Activity {
         for (int i = 0; i <= rowCount+1; i++) {
             TableRow tableRow = new TableRow(this);
             // create tableRow
-            for (int j = 0; j <= columnCount; j++) {
+            for (int j = 0; j <= rowCount; j++) {
                 //create textView
                 TextView textView = new TextView(this);
                 textView.setGravity(Gravity.CENTER);
@@ -59,7 +60,7 @@ public class GameStatus extends Activity {
                 }else if(i==rowCount+1 && j!=0){
                     textView.setText(total[j-1]+""); // Sum
                 }else if(i==0 && j!=0){
-                    textView.setText(column[j-1]); // Player Header
+                    textView.setText(playerName[j-1]); // Player Header
                 } else if(i!=0 && j>0){
                     total[j-1] += row.get(i-1)[j-1];
                     textView.setText(row.get(i-1)[j-1]+"");
@@ -93,7 +94,4 @@ public class GameStatus extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void testDataBase(){
-
-    }
 }

@@ -97,13 +97,13 @@ public class GameInitialization extends ActionBarActivity {
         EditText moneyPerPointView  = (EditText) findViewById(R.id.editMoneyPerPoint);
         EditText betterView  = (EditText) findViewById(R.id.editBetter);
         Intent intent = new Intent(this, GameInitialization.class);
-
         if(String.valueOf(spinner.getSelectedItem())==null || moneyPerPointView.getText().toString().equals("")
                 || betterView.getText().toString().equals("")){
         }else{
             numberOfPlayers = Integer.parseInt(String.valueOf(spinner.getSelectedItem()));
             moneyPerPoint = Double.parseDouble(moneyPerPointView.getText().toString());
             better = Double.parseDouble(betterView.getText().toString());
+            dbHelper.clearDatabase();
             dbHelper.addGameInfo(numberOfPlayers, gameType, moneyPerPoint, better);
             intent = new Intent(this, GameStatus.class);
         }

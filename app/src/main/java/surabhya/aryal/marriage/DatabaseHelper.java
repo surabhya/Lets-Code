@@ -17,7 +17,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION =1;
+    private static final int DATABASE_VERSION =7;
     static final String DATABASE_NAME = "marriageGame.db";
 
     public DatabaseHelper(Context context) {
@@ -28,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         final String SQL_CREATE_PLAYER_TABLE = "CREATE TABLE " + DatabaseContract.PlayerEntry.TABLE_NAME + " (" +
                 DatabaseContract.PlayerEntry.COLUMN_NAME_GAME_ID + " INTEGER NOT NULL, " +
-                DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_ID + " INTEGER NOT NULL, " +
                 DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_NAME + " TEXT NOT NULL, " +
                 DatabaseContract.PlayerEntry.COLUMN_NAME_IS_SEEN + " INTEGER NOT NULL, " +
                 DatabaseContract.PlayerEntry.COLUMN_NAME_IS_WINNER + " INTEGER NOT NULL, " +
@@ -62,10 +62,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(DatabaseContract.GameEntry.COLUMN_NAME_GAME_TYPE, gameType);
         values.put(DatabaseContract.GameEntry.COLUMN_NAME_MONEY_PER_POINT, moneyPerGame);
         values.put(DatabaseContract.GameEntry.COLUMN_NAME_BETTER_MONEY, betterMoney);
+        values.put(DatabaseContract.GameEntry.COLUMN_NAME_GRAND_TOTAL_MONEY, 0.0);
         SQLiteDatabase db = this.getWritableDatabase();
         long newRowId;
         newRowId = db.insert(
                 DatabaseContract.GameEntry.TABLE_NAME,
+                null,
+                values);
+        db.close();
+        for(int i=0; i <numOfPlayers; i++){
+            int j = i+1;
+            addPlayerInfo(0, i, "Player"+j, false, false, false, 0, 0);
+        }
+        return newRowId;
+    }
+
+    public long addPlayerInfo(int gameID, int playerID, String playerName, boolean seen, boolean winner, boolean less, double currentPoint, double currentTotal){
+        ContentValues values = new ContentValues();
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_GAME_ID, gameID);
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_ID, playerID);
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_NAME, playerName);
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_SEEN, seen);
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_WINNER, winner);
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_LESS, less);
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_CURRENT_POINT, currentPoint);
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_CURRENT_TOTAL, currentTotal);
+        SQLiteDatabase db = this.getWritableDatabase();
+        long newRowId;
+        newRowId = db.insert(
+                DatabaseContract.PlayerEntry.TABLE_NAME,
                 null,
                 values);
         db.close();
@@ -151,4 +176,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return item;
     }
+
+    public void clearDatabase() {
+
+        SQLiteDatabase db = this.getWritableDatabase(); // helper is object extends SQLiteOpenHelper
+        db.delete(DatabaseContract.GameEntry.TABLE_NAME, null, null);
+        db.delete(DatabaseContract.PlayerEntry.TABLE_NAME, null, null);
+        db.close();
+    }
+
 }
