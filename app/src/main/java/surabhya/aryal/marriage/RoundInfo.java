@@ -2,6 +2,7 @@ package surabhya.aryal.marriage;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ public class RoundInfo extends ActionBarActivity {
     String[] row;
     String[] col;
     int numOfPlayers;
+    ArrayList<PlayerInfo> players;
     DatabaseHelper dbHelper = new DatabaseHelper(this);
 
     @Override
@@ -35,7 +37,7 @@ public class RoundInfo extends ActionBarActivity {
 
     public void addData(){
 
-        ArrayList<PlayerInfo> players = dbHelper.findAllPlayerByGameID(0);
+        players = dbHelper.findAllPlayerByGameID(0);
         numOfPlayers = players.size();
         row = new String[numOfPlayers];
         for(int i =0; i<numOfPlayers; i++){
@@ -49,13 +51,14 @@ public class RoundInfo extends ActionBarActivity {
         TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
         tableRowParams.setMargins(1, 1, 1, 1);
         tableRowParams.weight = 1;
-        int count = 1;
 
         for (int i = 0; i <= rowCount; i++) {
             TableRow tableRow = new TableRow(this);
+            tableRow.setId(i);
             // create tableRow
             for (int j = 0; j <= 4; j++) {
                 //create textView
+                int count = 1;
                 TextView textView = new TextView(this);
                 textView.setGravity(Gravity.CENTER);
                 CheckBox checkBox = new CheckBox(this);
@@ -92,12 +95,19 @@ public class RoundInfo extends ActionBarActivity {
     }
 
     public void addRound(View view){
-        for(i = 1; i <=numOfPlayers*4)
-        TableRow t = (TableRow) view;
-        TextView firstTextView = (TextView) t.getChildAt(0);
-        TextView secondTextView = (TextView) t.getChildAt(1);
-        String firstText = firstTextView.getText().toString();
-        String secondText = secondTextView.getText().toString();
+        TableLayout table = (TableLayout) view.findViewById(R.id.maintable);
+        for(int i=0; i<numOfPlayers; i++){
+            int id = 1;
+            TableRow t = (TableRow) findViewById(i);
+            TextView isWinner = (TextView) t.getChildAt(1);
+            Log.e("isWinner ", isWinner.toString());
+//            TextView isSeen = (TextView) t.getChildAt(id++%4);
+//            TextView isLess = (TextView) t.getChildAt(id++%4);
+//            EditText point = (EditText) t.getChildAt(id++%4);
+//            Log.e("isSeen ", isSeen+"");
+//            Log.e("isLess ", isLess+"");
+//            Log.e("point ", point+"");
+        }
     }
 
     @Override
