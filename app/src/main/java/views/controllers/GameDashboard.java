@@ -1,69 +1,90 @@
-package surabhya.aryal.marriage;
+package views.controllers;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
 import java.util.ArrayList;
+import helpers.ViewHelper;
+import models.Player;
+import models.Round;
+import models.RoundPlayer;
 
-public class GameStatus extends Activity {
+public class GameDashboard extends ViewHelper {
 
     TableLayout tl;
+    ArrayList<Player> players;
+    int numOfPlayers;
+    int noOfRounds;
     String[] playerName;
-    ArrayList<Integer[]> row;
-    DatabaseHelper dbHelper = new DatabaseHelper(this);
+    ArrayList<Integer[]> roundInfo;
+
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected int getLayoutId() {
+        return R.layout.activity_game_dashboard;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_status);
         tl = (TableLayout) findViewById(R.id.gameStatusTable);
+        roundInfo = new ArrayList<Integer[]>();
+        players = mainMarriage.getPlayers();
+        numOfPlayers = mainMarriage.getSettings().getNoOfPlayers();
+        noOfRounds = mainMarriage.getRounds().size();
+
+        getPointsPerRound(mainMarriage.getRounds());
+        getPlayerNames();
         addData();
     }
 
-    public void addData(){
-        ArrayList<PlayerInfo> players = dbHelper.findAllPlayerByGameID(0);
-        int numOfPlayers = players.size();
+    public void getPlayerNames(){
         playerName = new String[numOfPlayers];
-        row = new ArrayList<Integer[]>();  // get from database
-        for(int i =0; i<numOfPlayers; i++){
-            playerName[i] = players.get(i).playerName;
-            row.add(new Integer[]{1,2,3,4,5,6,7});
+        for(int i =0; i < numOfPlayers; i++){
+            playerName[i] = players.get(i).getName();
         }
+    }
+
+    public void getPointsPerRound(ArrayList<Round> roundList){
+        for(int i =0; i<roundList.size(); i++){
+            Integer[] points = new Integer[roundList.size()];
+            for(int j = 0; j < roundList.get(i).getPlayers().size(); j++){
+                points[j] = roundList.get(i).getPlayers().get(j).getTotalPoints();
+            }
+            roundInfo.add(points);
+        }
+    }
+
+    public void addData(){
         int[] total = new int[numOfPlayers];
-        int rowCount= numOfPlayers;
 
         TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
         TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
         tableRowParams.setMargins(1, 1, 1, 1);
         tableRowParams.weight = 1;
 
-        for (int i = 0; i <= rowCount+1; i++) {
+        for (int i = 0; i <= noOfRounds; i++) {
             TableRow tableRow = new TableRow(this);
             // create tableRow
-            for (int j = 0; j <= rowCount; j++) {
+            for (int j = 0; j <= numOfPlayers; j++) {
                 //create textView
                 TextView textView = new TextView(this);
                 textView.setGravity(Gravity.CENTER);
                 if(i==0 && j==0){
                     textView.setText("Round");
-                }else if(i==rowCount+1 && j==0){
+                }else if(i==numOfPlayers+1 && j==0){
                     textView.setText("Total");
-                }else if(i==rowCount+1 && j!=0){
+                }else if(i==numOfPlayers+1 && j!=0){
                     textView.setText(total[j-1]+""); // Sum
                 }else if(i==0 && j!=0){
                     textView.setText(playerName[j-1]); // Player Header
                 } else if(i!=0 && j>0){
-                    total[j-1] += row.get(i-1)[j-1];
-                    textView.setText(row.get(i-1)[j-1]+"");
+                    total[j-1] += roundInfo.get(i-1)[j-1];
+                    textView.setText(roundInfo.get(i-1)[j-1]+"");
                 }else{
                     textView.setText("Round" + i);
                 }
@@ -75,9 +96,11 @@ public class GameStatus extends Activity {
         }
     }
 
-    public void newRound(View view){
-        Intent intent = new Intent(this, RoundInfo.class);
-        startActivity(intent);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_game_dashboard, menu);
+        return true;
     }
 
     @Override
@@ -91,6 +114,7 @@ public class GameStatus extends Activity {
         if (id == R.id.action_settings) {
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

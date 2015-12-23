@@ -6,8 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+
+import models.Player;
 
 /**
  * Created by saryal on 11/23/15.
@@ -17,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION =7;
+    private static final int DATABASE_VERSION = 14;
     static final String DATABASE_NAME = "marriageGame.db";
 
     public DatabaseHelper(Context context) {
@@ -56,13 +57,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public long addGameInfo(int numOfPlayers, String gameType, double moneyPerGame, double betterMoney){
+    public long addGameInfo(GameInfo game) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseContract.GameEntry.COLUMN_NAME_NUM_PLAYER, numOfPlayers);
-        values.put(DatabaseContract.GameEntry.COLUMN_NAME_GAME_TYPE, gameType);
-        values.put(DatabaseContract.GameEntry.COLUMN_NAME_MONEY_PER_POINT, moneyPerGame);
-        values.put(DatabaseContract.GameEntry.COLUMN_NAME_BETTER_MONEY, betterMoney);
-        values.put(DatabaseContract.GameEntry.COLUMN_NAME_GRAND_TOTAL_MONEY, 0.0);
+        values.put(DatabaseContract.GameEntry.COLUMN_NAME_NUM_PLAYER, game.getPlayerNum());
+        values.put(DatabaseContract.GameEntry.COLUMN_NAME_GAME_TYPE, game.getGameType());
+        values.put(DatabaseContract.GameEntry.COLUMN_NAME_MONEY_PER_POINT, game.getMoneyPerPoint());
+        values.put(DatabaseContract.GameEntry.COLUMN_NAME_BETTER_MONEY, game.getBetterMoney());
+        values.put(DatabaseContract.GameEntry.COLUMN_NAME_GRAND_TOTAL_MONEY, game.getTotalMoney());
         SQLiteDatabase db = this.getWritableDatabase();
         long newRowId;
         newRowId = db.insert(
@@ -70,34 +71,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null,
                 values);
         db.close();
-        for(int i=0; i <numOfPlayers; i++){
-            int j = i+1;
-            addPlayerInfo(0, i, "Player"+j, false, false, false, 0, 0);
+        for (int i = 0; i < game.getPlayerNum(); i++) {
+            int j = i + 1;
+            PlayerInfo player = new PlayerInfo(0, i, "Player" + j, false, false, false, 0, 0);
+            addPlayerInfo(player);
         }
         return newRowId;
     }
 
-    public long addPlayerInfo(int gameID, int playerID, String playerName, boolean seen, boolean winner, boolean less, double currentPoint, double currentTotal){
+    public long addPlayerInfo(PlayerInfo player) {
         ContentValues values = new ContentValues();
-        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_GAME_ID, gameID);
-        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_ID, playerID);
-        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_NAME, playerName);
-        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_SEEN, seen);
-        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_WINNER, winner);
-        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_LESS, less);
-        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_CURRENT_POINT, currentPoint);
-        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_CURRENT_TOTAL, currentTotal);
-        SQLiteDatabase db = this.getWritableDatabase();
-        long newRowId;
-        newRowId = db.insert(
-                DatabaseContract.PlayerEntry.TABLE_NAME,
-                null,
-                values);
-        db.close();
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_SEEN, player.isSeen());
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_WINNER, player.isWinner());
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_IS_LESS, player.isLess());
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_CURRENT_POINT, player.getCurrentPoint());
+        values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_CURRENT_TOTAL, player.getCurrentTotal());
+
+        PlayerInfo returnPlayer = findPlayer(player.getGameID(), player.getPlayerId());
+        long newRowId = 0;
+        if (returnPlayer == null) {
+            values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_GAME_ID, player.getGameID());
+            values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_ID, player.getPlayerId());
+            values.put(DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_NAME, player.getPlayerName());
+            SQLiteDatabase db = this.getWritableDatabase();
+            newRowId = db.insert(
+                    DatabaseContract.PlayerEntry.TABLE_NAME,
+                    null,
+                    values);
+        } else {
+
+        }
+       // db.close();
         return newRowId;
     }
 
-    public ArrayList<GameInfo> getAllGame(){
+    public ArrayList<GameInfo> getAllGame() {
 
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<GameInfo> data = new ArrayList<GameInfo>();
@@ -124,8 +132,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 sortOrder                                 // The sort order
         );
 
-        while(c.moveToNext()){
-            GameInfo item = new GameInfo(c.getInt(0),c.getInt(1),c.getString(2),c.getDouble(3),c.getDouble(4),c.getDouble(5));
+        while (c.moveToNext()) {
+            GameInfo item = new GameInfo(c.getInt(0), c.getInt(1), c.getString(2), c.getDouble(3), c.getDouble(4), c.getDouble(5));
             data.add(item);
         }
         c.close();
@@ -133,15 +141,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public GameInfo findGameByGameID(int gameId){
+    public GameInfo findGameByGameID(int gameId) {
         String query = "Select * FROM " + DatabaseContract.GameEntry.TABLE_NAME + " WHERE " + DatabaseContract.GameEntry.COLUMN_NAME_GAME_ID + " =  \"" + gameId + "\"";
         SQLiteDatabase db = this.getReadableDatabase();
+        //String query = "Select * FROM " + DatabaseContract.GameEntry.TABLE_NAME;
         Cursor c = db.rawQuery(query, null);
-        GameInfo item ;
+        GameInfo item;
 
         if (c.moveToFirst()) {
             c.moveToFirst();
-            item = new GameInfo(c.getInt(0),c.getInt(1),c.getString(2),c.getDouble(3),c.getDouble(4),c.getDouble(5));
+            item = new GameInfo(c.getInt(0), c.getInt(1), c.getString(2), c.getDouble(3), c.getDouble(4), c.getDouble(5));
             c.close();
         } else {
             item = null;
@@ -150,28 +159,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return item;
     }
 
-    public ArrayList<PlayerInfo> findAllPlayerByGameID(int gameId){
+    public ArrayList<PlayerInfo> findAllPlayerByGameID(int gameId) {
         String query = "Select * FROM " + DatabaseContract.PlayerEntry.TABLE_NAME + " WHERE " + DatabaseContract.PlayerEntry.COLUMN_NAME_GAME_ID + " =  \"" + gameId + "\"";
         ArrayList<PlayerInfo> data = new ArrayList<PlayerInfo>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
 
-        while(c.moveToNext()){
-            PlayerInfo item = new PlayerInfo(c.getInt(0),c.getInt(1),c.getString(2),c.getInt(3)>0,c.getInt(4) > 0, c.getInt(5)>0,c.getDouble(6),c.getDouble(7));
+        while (c.moveToNext()) {
+            PlayerInfo item = new PlayerInfo(c.getInt(0), c.getInt(1), c.getString(2), c.getInt(3) > 0, c.getInt(4) > 0, c.getInt(5) > 0, c.getDouble(6), c.getDouble(7));
             data.add(item);
         }
         db.close();
         return data;
     }
 
-    public PlayerInfo findPlayer(int gameId, int playerID){
+    public PlayerInfo findPlayer(int gameId, int playerID) {
         String query = "Select * FROM " + DatabaseContract.PlayerEntry.TABLE_NAME + " WHERE " + DatabaseContract.PlayerEntry.COLUMN_NAME_GAME_ID + " =  \"" + gameId + "\""
-                        + " and " +  DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_ID + " =  \"" + playerID + "\"";
+                + " and " + DatabaseContract.PlayerEntry.COLUMN_NAME_PLAYER_ID + " =  \"" + playerID + "\"";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
         PlayerInfo item = null;
-        while(c.moveToNext()){
-            item = new PlayerInfo(c.getInt(0),c.getInt(1),c.getString(2),c.getInt(3)>0,c.getInt(4) > 0, c.getInt(5)>0,c.getDouble(6),c.getDouble(7));
+        while (c.moveToNext()) {
+            item = new PlayerInfo(c.getInt(0), c.getInt(1), c.getString(2), c.getInt(3) > 0, c.getInt(4) > 0, c.getInt(5) > 0, c.getDouble(6), c.getDouble(7));
         }
         db.close();
         return item;

@@ -5,12 +5,12 @@ package surabhya.aryal.marriage;
  */
 public class GameInfo {
 
-    int gameId;
-    int playerNum;
-    String gameType;
-    double moneyPerPoint;
-    double betterMoney;
-    double totalMoney;
+    private int gameId;
+    private int playerNum;
+    private String gameType;
+    private double moneyPerPoint;
+    private double betterMoney;
+    private double totalMoney;
 
 
     public GameInfo(int gameId, int playerNum, String gameType, double moneyPerPoint, double betterMoney, double totalMoney) {

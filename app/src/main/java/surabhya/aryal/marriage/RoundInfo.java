@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import views.controllers.R;
+
 
 public class RoundInfo extends ActionBarActivity {
 
@@ -25,27 +27,28 @@ public class RoundInfo extends ActionBarActivity {
     String[] col;
     int numOfPlayers;
     ArrayList<PlayerInfo> players;
-    DatabaseHelper dbHelper = new DatabaseHelper(this);
+    DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_round_info);
-        tl = (TableLayout) findViewById(R.id.maintable);
+       // setContentView(R.layout.activity_round_info);
+      //  tl = (TableLayout) findViewById(R.id.maintable);
+        dbHelper = new DatabaseHelper(this);
         addData();
     }
 
-    public void addData(){
+    public void addData() {
 
         players = dbHelper.findAllPlayerByGameID(0);
         numOfPlayers = players.size();
         row = new String[numOfPlayers];
-        for(int i =0; i<numOfPlayers; i++){
-            row[i] = players.get(i).playerName;
+        for (int i = 0; i < numOfPlayers; i++) {
+            row[i] = players.get(i).getPlayerName();
         }
-        col  = new String[]{ "Winner", "Seen", "Less", "Points"}; // get from database
+        col = new String[]{"Winner", "Seen", "Less", "Points"}; // get from database
 
-        int rowCount=row.length;
+        int rowCount = row.length;
 
         TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
         TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
@@ -63,28 +66,28 @@ public class RoundInfo extends ActionBarActivity {
                 textView.setGravity(Gravity.CENTER);
                 CheckBox checkBox = new CheckBox(this);
                 EditText point = new EditText(this);
-                if(i==0 && j==0){
+                if (i == 0 && j == 0) {
                     textView.setText(" ");
                     tableRow.addView(textView, tableRowParams);
-                }else if(i>0 && j==0){
+                } else if (i > 0 && j == 0) {
                     textView.setText(row[i - 1]); // Player Header
                     tableRow.addView(textView, tableRowParams);
-                }else if(i==0 && j!=0){
-                    textView.setText(col[j-1]); //Game Header
+                } else if (i == 0 && j != 0) {
+                    textView.setText(col[j - 1]); //Game Header
                     tableRow.addView(textView, tableRowParams);
-                } else if(i>0 && j==1){
+                } else if (i > 0 && j == 1) {
                     checkBox.setText(""); // Is Winner
                     checkBox.setId(count++);
                     tableRow.addView(checkBox, tableRowParams);
-                }else if(i>0 && j==2){
+                } else if (i > 0 && j == 2) {
                     checkBox.setText(""); // Is Seen
                     checkBox.setId(count++);
                     tableRow.addView(checkBox, tableRowParams);
-                }else if(i>0 && j==3){
+                } else if (i > 0 && j == 3) {
                     checkBox.setText(""); // Is Less
                     checkBox.setId(count++);
                     tableRow.addView(checkBox, tableRowParams);
-                }else if(i>0 && j==4){
+                } else if (i > 0 && j == 4) {
                     point.setInputType(100); // Points
                     point.setId(count++);
                     tableRow.addView(point, tableRowParams);
@@ -94,26 +97,48 @@ public class RoundInfo extends ActionBarActivity {
         }
     }
 
-    public void addRound(View view){
-        TableLayout table = (TableLayout) view.findViewById(R.id.maintable);
-        for(int i=0; i<numOfPlayers; i++){
-            int id = 1;
+    public void addRound(View view) {
+        boolean isWinnerDoubly = false;
+        double totalPoint = 0;
+        for (int i = 1; i <= numOfPlayers; i++) {
+            int id = 0;
             TableRow t = (TableRow) findViewById(i);
-            TextView isWinner = (TextView) t.getChildAt(1);
-            Log.e("isWinner ", isWinner.toString());
-//            TextView isSeen = (TextView) t.getChildAt(id++%4);
-//            TextView isLess = (TextView) t.getChildAt(id++%4);
-//            EditText point = (EditText) t.getChildAt(id++%4);
-//            Log.e("isSeen ", isSeen+"");
-//            Log.e("isLess ", isLess+"");
-//            Log.e("point ", point+"");
+
+            id++;
+            CheckBox isWinner = (CheckBox) t.getChildAt(id++);
+            CheckBox isSeen = (CheckBox) t.getChildAt(id++);
+            CheckBox isLess = (CheckBox) t.getChildAt(id++);
+            EditText point = (EditText) t.getChildAt(id++);
+            totalPoint += Double.parseDouble(point.getText().toString());
+
+            PlayerInfo player = players.get(i-1);
+            player.setWinner(isWinner.isChecked());
+            player.setSeen(isSeen.isChecked());
+            player.setLess(isLess.isChecked());
+
+            if(isWinner.isChecked() && isLess.isChecked()){
+                player.setCurrentPoint(Double.parseDouble(point.getText().toString()) + 5);
+            }else{
+                player.setCurrentPoint(Double.parseDouble(point.getText().toString()));
+            }
+
+        }
+        Calculation calculationMurder = new Calculation(this);
+
+        if(dbHelper.findGameByGameID(1).getGameType().equals("murder")){
+            calculationMurder.calculateMurder(totalPoint);
+        }else if(dbHelper.findGameByGameID(0).getGameType().equals("kidnap")){
+            Log.e("Game Type Kidnap ", "");
+        }else{
+            calculationMurder.calculateNormal(totalPoint);
+            Log.e("Game Type Normal ", "");
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_round_info, menu);
+       // getMenuInflater().inflate(R.menu.menu_round_info, menu);
         return true;
     }
 
@@ -125,9 +150,9 @@ public class RoundInfo extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+       // if (id == R.id.action_settings) {
+       //     return true;
+       // }
 
         return super.onOptionsItemSelected(item);
     }

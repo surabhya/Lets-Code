@@ -1,19 +1,22 @@
 package surabhya.aryal.marriage;
 
+import java.util.ArrayList;
+
 /**
  * Created by saryal on 12/11/15.
  */
 
 
 public class PlayerInfo {
-    int gameID;
-    int playerId;
-    String playerName;
-    boolean seen;
-    boolean winner;
-    boolean less;
-    double currentPoint;
-    double currentTotal;
+    private int gameID;
+    private int playerId;
+    private String playerName;
+    private boolean seen;
+    private boolean winner;
+    private boolean less;
+    private double currentPoint;
+    private double currentTotal;
+    private ArrayList<Double> pointsList;
 
     public PlayerInfo(int gameID, int playerId, String playerName, boolean seen, boolean winner,
                       boolean less, double currentPoint, double currentTotal) {
@@ -25,6 +28,7 @@ public class PlayerInfo {
         this.less = less;
         this.currentPoint = currentPoint;
         this.currentTotal = currentTotal;
+        this.pointsList = new ArrayList<Double>();
     }
 
     public int getGameID() {

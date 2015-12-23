@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="views.controllers.GameStatus">
+    tools:context="views.controllers.GameDashboard">
 
     <Button
         android:layout_width="wrap_content"
@@ -28,8 +28,7 @@
             <TableLayout
                 android:id="@+id/gameStatusTable"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </TableLayout>
+                android:layout_height="wrap_content"></TableLayout>
 
         </HorizontalScrollView>
 

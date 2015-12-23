@@ -27,5 +27,9 @@
     <string name="roundinfo">Round Info</string>
     <string name="newround">Add Round</string>
     <string name="addround">Add Round</string>
+    <string name="title_activity_start_screen">StartScreen</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_game_dashboard">GameDashboard</string>
 
 </resources>
