@@ -19,7 +19,7 @@ import models.Settings;
 public class GameInitialization extends ViewHelper {
     protected int layoutId = R.layout.game_initialization;
 
-    GameType gameType;
+    GameType gameType = GameType.Murder;;
 
 
 
@@ -148,6 +148,7 @@ public class GameInitialization extends ViewHelper {
                     pl.setId(++prevId);
                     pl.setName("P " + prevId);
                     mainMarriage.getPlayers().add(pl);
+                    mainMarriage.setPlayerIdCount(prevId);
                 }
             }
             else if(mainMarriage.getPlayers().size() > mainMarriage.getSettings().getNoOfPlayers()) {

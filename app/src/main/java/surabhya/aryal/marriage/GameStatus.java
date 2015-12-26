@@ -1,4 +1,4 @@
-package views.controllers;
+package surabhya.aryal.marriage;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,9 +12,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import helpers.ViewHelper;
-import surabhya.aryal.marriage.DatabaseHelper;
-import surabhya.aryal.marriage.PlayerInfo;
-import surabhya.aryal.marriage.RoundInfo;
+import views.controllers.RoundInfo;
+import views.controllers.R;
 
 
 public class GameStatus extends ViewHelper {

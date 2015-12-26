@@ -1,5 +1,7 @@
 package models;
 
+import android.drm.DrmStore;
+
 import java.util.ArrayList;
 
 /**
@@ -11,13 +13,13 @@ public class Marriage {
     private ArrayList<Round> Rounds;
     private TotalForGame FinalNumbers;
 
-    private int CurrentRound;
+    private Round CurrentRound;
 
-    public int getCurrentRound() {
+    public Round getCurrentRound() {
         return CurrentRound;
     }
 
-    public void setCurrentRound(int currentRound) {
+    public void setCurrentRound(Round currentRound) {
         CurrentRound = currentRound;
     }
 
@@ -61,5 +63,14 @@ public class Marriage {
 
     public void setFinalNumbers(TotalForGame finalNumbers) {
         FinalNumbers = finalNumbers;
+    }
+
+    public int getNextRoundId(){
+        if(Rounds.size()==0) return 0;
+        int id = Rounds.get(0).getId();
+        for(int i = 1; i < Rounds.size(); i++){
+            if(id<Rounds.get(i).getId()) id=Rounds.get(i).getId();
+        }
+        return id+1;
     }
 }

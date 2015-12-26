@@ -26,11 +26,16 @@
             android:name=".GameStatus"
             android:label="@string/title_activity_game_status" >
         </activity>
+        -->
+
         <activity
             android:name=".RoundInfo"
             android:label="@string/title_activity_round_info" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="views.controllers.GameDashboard" />
         </activity>
--->
+
         <activity
             android:name=".StartScreen"
             android:label="@string/title_activity_start_screen" >

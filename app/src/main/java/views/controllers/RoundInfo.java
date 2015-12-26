@@ -1,7 +1,9 @@
-package surabhya.aryal.marriage;
+package views.controllers;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -14,37 +16,49 @@ import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import views.controllers.R;
+import helpers.ViewHelper;
+import models.GameType;
+import models.Round;
+import models.RoundPlayer;
+import helpers.Calculation;
+import surabhya.aryal.marriage.DatabaseHelper;
+import surabhya.aryal.marriage.PlayerInfo;
 
 
-public class RoundInfo extends ActionBarActivity {
+public class RoundInfo extends ViewHelper {
 
     TableLayout tl;
     String[] row;
     String[] col;
     int numOfPlayers;
-    ArrayList<PlayerInfo> players;
-    DatabaseHelper dbHelper;
+    GameType gameType;
+    Round currentRound;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_round_info;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setContentView(R.layout.activity_round_info);
-      //  tl = (TableLayout) findViewById(R.id.maintable);
-        dbHelper = new DatabaseHelper(this);
+        currentRound = mainMarriage.getCurrentRound();
+        gameType = mainMarriage.getSettings().getType();
+        tl = (TableLayout) findViewById(R.id.maintable);
         addData();
+        //initialize();
     }
 
     public void addData() {
 
-        players = dbHelper.findAllPlayerByGameID(0);
-        numOfPlayers = players.size();
+        numOfPlayers = currentRound.getPlayers().size();
         row = new String[numOfPlayers];
         for (int i = 0; i < numOfPlayers; i++) {
-            row[i] = players.get(i).getPlayerName();
+            row[i] = currentRound.getPlayers().get(i).getPlayer().getName();
         }
         col = new String[]{"Winner", "Seen", "Less", "Points"}; // get from database
 
@@ -97,48 +111,77 @@ public class RoundInfo extends ActionBarActivity {
         }
     }
 
-    public void addRound(View view) {
-        boolean isWinnerDoubly = false;
-        double totalPoint = 0;
+    public void initialize() {
+
         for (int i = 1; i <= numOfPlayers; i++) {
             int id = 0;
-            TableRow t = (TableRow) findViewById(i);
+            TableRow t = (TableRow) findViewById(id);
 
             id++;
-            CheckBox isWinner = (CheckBox) t.getChildAt(id++);
-            CheckBox isSeen = (CheckBox) t.getChildAt(id++);
-            CheckBox isLess = (CheckBox) t.getChildAt(id++);
-            EditText point = (EditText) t.getChildAt(id++);
-            totalPoint += Double.parseDouble(point.getText().toString());
-
-            PlayerInfo player = players.get(i-1);
-            player.setWinner(isWinner.isChecked());
-            player.setSeen(isSeen.isChecked());
-            player.setLess(isLess.isChecked());
-
-            if(isWinner.isChecked() && isLess.isChecked()){
-                player.setCurrentPoint(Double.parseDouble(point.getText().toString()) + 5);
-            }else{
-                player.setCurrentPoint(Double.parseDouble(point.getText().toString()));
-            }
-
+            id++;
+            id++;
+            id++;
+            EditText point = (EditText) (t.getChildAt(id++));
+            point.setText("0");
         }
-        Calculation calculationMurder = new Calculation(this);
+        if (gameType == GameType.Murder) {
+        }
+    }
 
-        if(dbHelper.findGameByGameID(1).getGameType().equals("murder")){
-            calculationMurder.calculateMurder(totalPoint);
-        }else if(dbHelper.findGameByGameID(0).getGameType().equals("kidnap")){
-            Log.e("Game Type Kidnap ", "");
-        }else{
-            calculationMurder.calculateNormal(totalPoint);
-            Log.e("Game Type Normal ", "");
+    public boolean validInput(View View){
+        return true;
+    }
+
+    public void addRound(View view) {
+
+        if(validInput(view)){
+            int totalPoint = 0;
+            for (int i = 1; i <= numOfPlayers; i++) {
+                int id = 0;
+                TableRow t = (TableRow) findViewById(i);
+
+                id++;
+                CheckBox isWinner = (CheckBox) t.getChildAt(id++);
+                CheckBox isSeen = (CheckBox) t.getChildAt(id++);
+                CheckBox isLess = (CheckBox) t.getChildAt(id++);
+                EditText point = (EditText) t.getChildAt(id++);
+                totalPoint += Integer.parseInt(point.getText().toString());
+
+                RoundPlayer player = currentRound.getPlayers().get(i - 1);
+                player.setIsWinner(isWinner.isChecked());
+                player.setIsSeen(isSeen.isChecked());
+                player.setIsPlayingDuplee(isLess.isChecked());
+
+                if (isWinner.isChecked() && isLess.isChecked()) {
+                    player.setMaal(Integer.parseInt(point.getText().toString()) + 5);
+                } else {
+                    player.setMaal(Integer.parseInt(point.getText().toString()));
+                }
+
+            }
+            Calculation calculationMurder = new Calculation(mainMarriage);
+            if (mainMarriage.getSettings().getType() == GameType.Murder) {
+                calculationMurder.calculateMurder(totalPoint);
+            } else if (mainMarriage.getSettings().getType() == GameType.Kidnap) {
+                Log.e("Game Type Kidnap ", "");
+            } else {
+                calculationMurder.calculateNormal(totalPoint);
+                Log.e("Game Type Normal ", "");
+            }
+            Intent intent = new Intent(this, GameDashboard.class);
+            startActivity(intent);
+        }
+        else{
+            Toast toast = Toast.makeText(this,
+                    "Invalid Inputs", Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-       // getMenuInflater().inflate(R.menu.menu_round_info, menu);
+        // getMenuInflater().inflate(R.menu.menu_round_info, menu);
         return true;
     }
 
@@ -150,9 +193,9 @@ public class RoundInfo extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-       // if (id == R.id.action_settings) {
-       //     return true;
-       // }
+        // if (id == R.id.action_settings) {
+        //     return true;
+        // }
 
         return super.onOptionsItemSelected(item);
     }

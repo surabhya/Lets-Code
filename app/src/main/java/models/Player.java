@@ -22,4 +22,10 @@ public class Player {
     public void setName(String name) {
         Name = name;
     }
+
+    public RoundPlayer convertToRoundPlayer() {
+        RoundPlayer rp = new RoundPlayer();
+        rp.setPlayer(this);
+        return  rp;
+    }
 }
