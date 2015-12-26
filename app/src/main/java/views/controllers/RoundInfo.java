@@ -2,8 +2,6 @@ package views.controllers;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -11,22 +9,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-
 import helpers.ViewHelper;
 import models.GameType;
 import models.Round;
 import models.RoundPlayer;
 import helpers.Calculation;
-import surabhya.aryal.marriage.DatabaseHelper;
-import surabhya.aryal.marriage.PlayerInfo;
 
 
 public class RoundInfo extends ViewHelper {
@@ -50,7 +41,7 @@ public class RoundInfo extends ViewHelper {
         gameType = mainMarriage.getSettings().getType();
         tl = (TableLayout) findViewById(R.id.maintable);
         addData();
-        //initialize();
+        initialize();
     }
 
     public void addData() {
@@ -115,7 +106,7 @@ public class RoundInfo extends ViewHelper {
 
         for (int i = 1; i <= numOfPlayers; i++) {
             int id = 0;
-            TableRow t = (TableRow) findViewById(id);
+            TableRow t = (TableRow) findViewById(i);
 
             id++;
             id++;
@@ -133,8 +124,6 @@ public class RoundInfo extends ViewHelper {
     }
 
     public void addRound(View view) {
-
-        if(validInput(view)){
             int totalPoint = 0;
             for (int i = 1; i <= numOfPlayers; i++) {
                 int id = 0;
@@ -146,6 +135,7 @@ public class RoundInfo extends ViewHelper {
                 CheckBox isLess = (CheckBox) t.getChildAt(id++);
                 EditText point = (EditText) t.getChildAt(id++);
                 totalPoint += Integer.parseInt(point.getText().toString());
+
 
                 RoundPlayer player = currentRound.getPlayers().get(i - 1);
                 player.setIsWinner(isWinner.isChecked());
@@ -163,19 +153,19 @@ public class RoundInfo extends ViewHelper {
             if (mainMarriage.getSettings().getType() == GameType.Murder) {
                 calculationMurder.calculateMurder(totalPoint);
             } else if (mainMarriage.getSettings().getType() == GameType.Kidnap) {
-                Log.e("Game Type Kidnap ", "");
+                displayError("Game Type Kidnap Not Implemented");
             } else {
                 calculationMurder.calculateNormal(totalPoint);
-                Log.e("Game Type Normal ", "");
+                displayError("Game Type Normal Not Implemented");
             }
             Intent intent = new Intent(this, GameDashboard.class);
             startActivity(intent);
-        }
-        else{
-            Toast toast = Toast.makeText(this,
-                    "Invalid Inputs", Toast.LENGTH_SHORT);
-            toast.show();
-        }
+    }
+
+    public void displayError(String msg){
+        Toast toast = Toast.makeText(this,
+                msg, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     @Override
