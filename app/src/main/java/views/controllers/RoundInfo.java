@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -15,6 +17,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import helpers.ViewHelper;
 import models.GameType;
 import models.Round;
@@ -44,11 +47,10 @@ public class RoundInfo extends ViewHelper {
         gameType = mainMarriage.getSettings().getType();
         tl = (TableLayout) findViewById(R.id.maintable);
         playerId = 0;
-        addData();
         initialize();
     }
 
-    public void addData() {
+    public void initialize() {
 
         numOfPlayers = currentRound.getPlayers().size();
         row = new String[numOfPlayers];
@@ -61,7 +63,7 @@ public class RoundInfo extends ViewHelper {
 
         RadioGroup winnerGrp = new RadioGroup(this);
         int i;
-        for ( i = 0; i <= rowCount; i++) {
+        for (i = 0; i <= rowCount; i++) {
             TableRow tableRow = new TableRow(this);
             RadioButton winnerBtn = new RadioButton(winnerGrp.getContext());
             tableRow.setId(i);
@@ -81,6 +83,15 @@ public class RoundInfo extends ViewHelper {
                     playerName.setId(playerId++);
                     playerName.setFadingEdgeLength(5);
                     tableRow.addView(playerName);
+//                    playerName.setEnabled(false);
+//                    playerName.setClickable(true);
+//                    playerName.setOnClickListener(new View.OnClickListener() {
+//
+//                        @Override
+//                        public void onClick(View v) {
+//                            playerName.setEnabled(true);
+//                        }
+//                    });
                     playerName.addTextChangedListener(new TextWatcher() {
 
                         @Override
@@ -114,6 +125,9 @@ public class RoundInfo extends ViewHelper {
                 } else if (i > 0 && j == 4) {
                     point.setInputType(100); // Points
                     point.setId(count++);
+//                    point.setEnabled(false);
+//                    point.setClickable(true);
+                    point.setText("0");
                     tableRow.addView(point);
                 }
             }
@@ -121,66 +135,68 @@ public class RoundInfo extends ViewHelper {
         }
     }
 
-    public void initialize() {
+    public boolean validInput(View View) {
+        return true;
+    }
 
+    public void addRound(View view) {
+        boolean ifWinnerChecked = false;
+        int totalPoint = 0;
         for (int i = 1; i <= numOfPlayers; i++) {
             int id = 0;
             TableRow t = (TableRow) findViewById(i);
 
             id++;
-            id++;
-            id++;
-            id++;
-            EditText point = (EditText) (t.getChildAt(id++));
-            point.setText("0");
-        }
-        if (gameType == GameType.Murder) {
-        }
-    }
+            CheckBox isWinner = (CheckBox) t.getChildAt(id++);
+            CheckBox isSeen = (CheckBox) t.getChildAt(id++);
+            CheckBox isLess = (CheckBox) t.getChildAt(id++);
+            EditText point = (EditText) t.getChildAt(id++);
+            totalPoint += Integer.parseInt(point.getText().toString());
 
-    public boolean validInput(View View){
-        return true;
-    }
-
-    public void addRound(View view) {
-            int totalPoint = 0;
-            for (int i = 1; i <= numOfPlayers; i++) {
-                int id = 0;
-                TableRow t = (TableRow) findViewById(i);
-
-                id++;
-                CheckBox isWinner = (CheckBox) t.getChildAt(id++);
-                CheckBox isSeen = (CheckBox) t.getChildAt(id++);
-                CheckBox isLess = (CheckBox) t.getChildAt(id++);
-                EditText point = (EditText) t.getChildAt(id++);
-                totalPoint += Integer.parseInt(point.getText().toString());
-
-
-                RoundPlayer player = currentRound.getPlayers().get(i - 1);
-                player.setIsWinner(isWinner.isChecked());
-                player.setIsSeen(isSeen.isChecked());
-                player.setIsPlayingDuplee(isLess.isChecked());
-
-                if (isWinner.isChecked() && isLess.isChecked()) {
-                    player.setMaal(Integer.parseInt(point.getText().toString()) + 5);
-                } else {
-                    player.setMaal(Integer.parseInt(point.getText().toString()));
-                }
-
+            if (isWinner.isChecked() && ifWinnerChecked) {
+                displayError("Invalid Input: Multiple Winners Selected");
+                return;
             }
-            Calculation calculationMurder = new Calculation(mainMarriage);
-            if (mainMarriage.getSettings().getType() == GameType.Murder) {
-                calculationMurder.calculateMurder(totalPoint);
-            } else if (mainMarriage.getSettings().getType() == GameType.Kidnap) {
-                calculationMurder.calculateKidnap(totalPoint);
+
+            if (isWinner.isChecked() && !isSeen.isChecked()) {
+                displayError("Invalid Input: Winner Must Be Seen");
+                return;
+            }
+
+            if (isWinner.isChecked() && isSeen.isChecked()) {
+                ifWinnerChecked = true;
+                return;
+            }
+
+            RoundPlayer player = currentRound.getPlayers().get(i - 1);
+            player.setIsWinner(isWinner.isChecked());
+            player.setIsSeen(isSeen.isChecked());
+            player.setIsPlayingDuplee(isLess.isChecked());
+
+            if (isWinner.isChecked() && isLess.isChecked()) {
+                player.setMaal(Integer.parseInt(point.getText().toString()) + 5);
             } else {
-                calculationMurder.calculateNormal(totalPoint);
+                player.setMaal(Integer.parseInt(point.getText().toString()));
             }
-            Intent intent = new Intent(this, GameDashboard.class);
-            startActivity(intent);
+
+        }
+        if (!ifWinnerChecked) {
+            displayError("Invalid Input: No Winner Selected");
+            return;
+        }
+        Calculation calculationMurder = new Calculation(mainMarriage);
+        if (mainMarriage.getSettings().getType() == GameType.Murder) {
+            calculationMurder.calculateMurder(totalPoint);
+        } else if (mainMarriage.getSettings().getType() == GameType.Kidnap) {
+            calculationMurder.calculateKidnap(totalPoint);
+        } else {
+            calculationMurder.calculateNormal(totalPoint);
+        }
+        Intent intent = new Intent(this, GameDashboard.class);
+        startActivity(intent);
     }
 
-    public void displayError(String msg){
+    public void displayError(String msg) {
         Toast toast = Toast.makeText(this,
                 msg, Toast.LENGTH_SHORT);
         toast.show();
