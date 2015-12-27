@@ -4,10 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.text.method.TextKeyListener;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -176,10 +172,9 @@ public class RoundInfo extends ViewHelper {
             if (mainMarriage.getSettings().getType() == GameType.Murder) {
                 calculationMurder.calculateMurder(totalPoint);
             } else if (mainMarriage.getSettings().getType() == GameType.Kidnap) {
-                displayError("Game Type Kidnap Not Implemented");
+                calculationMurder.calculateKidnap(totalPoint);
             } else {
                 calculationMurder.calculateNormal(totalPoint);
-                displayError("Game Type Normal Not Implemented");
             }
             Intent intent = new Intent(this, GameDashboard.class);
             startActivity(intent);
