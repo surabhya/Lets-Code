@@ -2,13 +2,19 @@ package views.controllers;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -26,6 +32,7 @@ public class RoundInfo extends ViewHelper {
     String[] row;
     String[] col;
     int numOfPlayers;
+    int playerId;
     GameType gameType;
     Round currentRound;
 
@@ -40,6 +47,7 @@ public class RoundInfo extends ViewHelper {
         currentRound = mainMarriage.getCurrentRound();
         gameType = mainMarriage.getSettings().getType();
         tl = (TableLayout) findViewById(R.id.maintable);
+        playerId = 0;
         addData();
         initialize();
     }
@@ -55,50 +63,65 @@ public class RoundInfo extends ViewHelper {
 
         int rowCount = row.length;
 
-        TableLayout.LayoutParams tableLayoutParams = new TableLayout.LayoutParams();
-        TableRow.LayoutParams tableRowParams = new TableRow.LayoutParams();
-        tableRowParams.setMargins(1, 1, 1, 1);
-        tableRowParams.weight = 1;
-
-        for (int i = 0; i <= rowCount; i++) {
+        RadioGroup winnerGrp = new RadioGroup(this);
+        int i;
+        for ( i = 0; i <= rowCount; i++) {
             TableRow tableRow = new TableRow(this);
+            RadioButton winnerBtn = new RadioButton(winnerGrp.getContext());
             tableRow.setId(i);
             // create tableRow
             for (int j = 0; j <= 4; j++) {
                 //create textView
                 int count = 1;
                 TextView textView = new TextView(this);
-                textView.setGravity(Gravity.CENTER);
                 CheckBox checkBox = new CheckBox(this);
                 EditText point = new EditText(this);
+                final EditText playerName = new EditText(this);
                 if (i == 0 && j == 0) {
                     textView.setText(" ");
-                    tableRow.addView(textView, tableRowParams);
+                    tableRow.addView(textView);
                 } else if (i > 0 && j == 0) {
-                    textView.setText(row[i - 1]); // Player Header
-                    tableRow.addView(textView, tableRowParams);
+                    playerName.setText(row[i - 1]); // Player Header
+                    playerName.setId(playerId++);
+                    playerName.setFadingEdgeLength(5);
+                    tableRow.addView(playerName);
+                    playerName.addTextChangedListener(new TextWatcher() {
+
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+                            mainMarriage.getCurrentRound().getPlayers().get(playerName.getId()).getPlayer().setName(s.toString());
+                        }
+                    });
                 } else if (i == 0 && j != 0) {
                     textView.setText(col[j - 1]); //Game Header
-                    tableRow.addView(textView, tableRowParams);
+                    tableRow.addView(textView);
                 } else if (i > 0 && j == 1) {
                     checkBox.setText(""); // Is Winner
                     checkBox.setId(count++);
-                    tableRow.addView(checkBox, tableRowParams);
+                    tableRow.addView(checkBox);
                 } else if (i > 0 && j == 2) {
                     checkBox.setText(""); // Is Seen
                     checkBox.setId(count++);
-                    tableRow.addView(checkBox, tableRowParams);
+                    tableRow.addView(checkBox);
                 } else if (i > 0 && j == 3) {
                     checkBox.setText(""); // Is Less
                     checkBox.setId(count++);
-                    tableRow.addView(checkBox, tableRowParams);
+                    tableRow.addView(checkBox);
                 } else if (i > 0 && j == 4) {
                     point.setInputType(100); // Points
                     point.setId(count++);
-                    tableRow.addView(point, tableRowParams);
+                    tableRow.addView(point);
                 }
             }
-            tl.addView(tableRow, tableLayoutParams);
+            tl.addView(tableRow);
         }
     }
 
