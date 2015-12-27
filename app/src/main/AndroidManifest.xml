@@ -15,19 +15,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="views.controllers.StartScreen" />
         </activity>
-   <!--     <activity
-            android:name=".GameStatus"
-            android:label="@string/title_activity_game_status" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="views.controllers.GameInitialization" />
-        </activity>
-        <activity
-            android:name=".GameStatus"
-            android:label="@string/title_activity_game_status" >
-        </activity>
-        -->
-
         <activity
             android:name=".RoundInfo"
             android:label="@string/title_activity_round_info" >

@@ -9,9 +9,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import models.Marriage;
-import surabhya.aryal.marriage.DatabaseHelper;
 import views.controllers.MarriageApplication;
-import views.controllers.R;
 
 /**
  * Created by saryal on 12/22/15.

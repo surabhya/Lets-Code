@@ -1,4 +1,4 @@
-package surabhya.aryal.marriage;
+package helpers;
 
 import android.provider.BaseColumns;
 

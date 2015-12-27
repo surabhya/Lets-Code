@@ -103,18 +103,18 @@ public class GameDashboard extends ViewHelper {
                 TextView textView = new TextView(this);
                 textView.setGravity(Gravity.BOTTOM);
                 if(i==0 && j==0){
-                    textView.setText("Round");
+                    textView.setText("Round    ");
                 }else if(i==numOfPlayers+1 && j==0){
-                    textView.setText("Total");
+                    textView.setText("Total  ");
                 }else if(i==numOfPlayers+1 && j!=0){
-                    textView.setText(total[j-1]+""); // Sum
+                    textView.setText(total[j-1]+"  "); // Sum
                 }else if(i==0 && j!=0){
-                    textView.setText(playerName[j-1]); // Player Header
+                    textView.setText(playerName[j-1] +"   "); // Player Header
                 } else if(i!=0 && j>0){
                     total[j-1] += roundInfo.get(i-1)[j-1];
-                    textView.setText(roundInfo.get(i-1)[j-1]+"");
+                    textView.setText(roundInfo.get(i-1)[j-1]+"   ");
                 }else{
-                    textView.setText("Round" + i);
+                    textView.setText("Round " + i +"  ");
                 }
                 //add textView to tableRow
                 tableRow.addView(textView, tableRowParams);

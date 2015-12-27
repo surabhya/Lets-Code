@@ -1,4 +1,4 @@
-package surabhya.aryal.marriage;
+package helpers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
-import models.Player;
+import helpers.DatabaseContract;
+import surabhya.aryal.marriage.GameInfo;
+import surabhya.aryal.marriage.PlayerInfo;
 
 /**
  * Created by saryal on 11/23/15.

@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -17,7 +15,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import helpers.ViewHelper;
 import models.GameType;
 import models.Round;
@@ -83,15 +80,6 @@ public class RoundInfo extends ViewHelper {
                     playerName.setId(playerId++);
                     playerName.setFadingEdgeLength(5);
                     tableRow.addView(playerName);
-//                    playerName.setEnabled(false);
-//                    playerName.setClickable(true);
-//                    playerName.setOnClickListener(new View.OnClickListener() {
-//
-//                        @Override
-//                        public void onClick(View v) {
-//                            playerName.setEnabled(true);
-//                        }
-//                    });
                     playerName.addTextChangedListener(new TextWatcher() {
 
                         @Override
@@ -108,7 +96,7 @@ public class RoundInfo extends ViewHelper {
                         }
                     });
                 } else if (i == 0 && j != 0) {
-                    textView.setText(col[j - 1]); //Game Header
+                    textView.setText(col[j - 1]+ "   "); //Game Header
                     tableRow.addView(textView);
                 } else if (i > 0 && j == 1) {
                     checkBox.setText(""); // Is Winner
@@ -125,18 +113,12 @@ public class RoundInfo extends ViewHelper {
                 } else if (i > 0 && j == 4) {
                     point.setInputType(100); // Points
                     point.setId(count++);
-//                    point.setEnabled(false);
-//                    point.setClickable(true);
                     point.setText("0");
                     tableRow.addView(point);
                 }
             }
             tl.addView(tableRow);
         }
-    }
-
-    public boolean validInput(View View) {
-        return true;
     }
 
     public void addRound(View view) {
@@ -157,14 +139,12 @@ public class RoundInfo extends ViewHelper {
                 displayError("Invalid Input: Multiple Winners Selected");
                 return;
             }
+            else if (isWinner.isChecked() && isSeen.isChecked()) {
+                ifWinnerChecked = true;
+            }
 
             if (isWinner.isChecked() && !isSeen.isChecked()) {
                 displayError("Invalid Input: Winner Must Be Seen");
-                return;
-            }
-
-            if (isWinner.isChecked() && isSeen.isChecked()) {
-                ifWinnerChecked = true;
                 return;
             }
 

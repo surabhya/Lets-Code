@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import helpers.DatabaseHelper;
 import helpers.ViewHelper;
 import views.controllers.RoundInfo;
 import views.controllers.R;
