@@ -9,12 +9,25 @@
     tools:context="views.controllers.StartScreen">
 
     <Button
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Game"
-        android:id="@+id/button"
+        android:layout_alignEnd="@+id/resumeGame"
+        android:layout_alignLeft="@+id/resumeGame"
         android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/resumeGame"
+        android:layout_alignStart="@+id/resumeGame"
+        android:layout_marginBottom="30dp"
+        android:onClick="startGame"
+        android:text="Start Game" />
+
+    <Button
+        android:id="@+id/resumeGame"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="45dp"
-        android:onClick="startGame" />
+        android:onClick="resumeGame"
+        android:text="Resume Game" />
+
 </RelativeLayout>

@@ -20,6 +20,11 @@ public class StartScreen extends ViewHelper {
         Intent intent = new Intent(this, GameInitialization.class);
         startActivity(intent);
     }
+
+    public void resumeGame(){
+
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
